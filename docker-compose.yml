@@ -1,0 +1,9 @@
+services:
+  app:
+    image: irubinshtein/devops-for-developers-project-74
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    ports:
+      - 8080:8080
+    command: make test
