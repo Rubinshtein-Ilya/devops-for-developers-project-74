@@ -13,6 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Provide docker-compose (v2 shim)
+        run: |
+          printf '#!/bin/bash\nexec docker compose "$@"\n' | sudo tee /usr/local/bin/docker-compose > /dev/null
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose version
+
       - name: Run tests via Docker Compose
         run: make ci
 
