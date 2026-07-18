@@ -11,8 +11,9 @@ COPY app/package-lock.json package-lock.json
 RUN npm install -g npm@10
 
 RUN npm ci
-# страховка от npm/cli#4828: доустановить нативный биндинг rolldown, если npm ci его пропустил
-RUN node -e "require('rolldown')" 2>/dev/null || npm install --no-save --force @rolldown/binding-linux-x64-gnu
+# npm/cli#4828: убедиться, что нативный биндинг rolldown установлен (точная версия из lock)
+RUN test -d node_modules/@rolldown/binding-linux-x64-gnu \
+  || npm install --no-save @rolldown/binding-linux-x64-gnu@"$(node -p "require('rolldown/package.json').version")"
 
 COPY app/. .
 
