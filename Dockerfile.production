@@ -6,10 +6,13 @@ WORKDIR /app
 COPY app/package.json package.json
 COPY app/package-lock.json package-lock.json
 
-# npm 10.5.0 из node:20.12.2 не ставит платформенные optional deps (npm/cli#4828)
-RUN npm install -g npm@11
+# npm 10.5.0 из node:20.12.2 не ставит платформенные optional deps (npm/cli#4828);
+# npm@11 требует node >=20.17, поэтому ставим последний совместимый 10.x
+RUN npm install -g npm@10
 
 RUN npm ci
+# страховка от npm/cli#4828: доустановить нативный биндинг rolldown, если npm ci его пропустил
+RUN node -e "require('rolldown')" 2>/dev/null || npm install --no-save --force @rolldown/binding-linux-x64-gnu
 
 COPY app/. .
 
