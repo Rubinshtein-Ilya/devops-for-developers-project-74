@@ -40,7 +40,17 @@ make setup   # установка зависимостей приложения 
 
 Приложение конфигурируется переменными окружения (`DATABASE_HOST`,
 `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_PORT`).
-Для локального запуска они задаются в `app/.env`, который создаётся копированием:
+
+Docker Compose подставляет их из корневого `.env` (создаётся копированием
+`.env.example`); если файла нет, действуют значения по умолчанию —
+именно они используются в CI:
+
+```bash
+cp .env.example .env
+```
+
+Для запуска приложения вне Docker переменные читаются через dotenv
+из `app/.env`:
 
 ```bash
 cp app/.env.example app/.env
