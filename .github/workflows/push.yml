@@ -13,11 +13,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Provide docker-compose (v2 shim)
-        run: |
-          printf '#!/bin/bash\nexec docker compose "$@"\n' | sudo tee /usr/local/bin/docker-compose > /dev/null
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose version
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build production image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.production
+          load: true
+          tags: irubinshtein/devops-for-developers-project-74:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Run tests via Docker Compose
         run: make ci
@@ -28,8 +35,11 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Build production image
-        run: make build
-
       - name: Push image to Docker Hub
-        run: make push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.production
+          push: true
+          tags: irubinshtein/devops-for-developers-project-74:latest
+          cache-from: type=gha

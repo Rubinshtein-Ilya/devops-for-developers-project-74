@@ -59,7 +59,7 @@ cp app/.env.example app/.env
 ## Запуск (разработка)
 
 ```bash
-make dev     # docker-compose up: app + postgres + caddy
+make dev     # docker compose up: app + postgres + caddy
 ```
 
 - <http://localhost> — редирект на https
@@ -83,5 +83,6 @@ make push    # публикация образа на Docker Hub
 ## CI
 
 На каждый push в `main` GitHub Actions ([push.yml](.github/workflows/push.yml)):
-прогоняет тесты внутри Docker Compose, собирает продакшен-образ и публикует
-его на Docker Hub с тегом `latest`.
+собирает продакшен-образ через [docker/build-push-action](https://github.com/docker/build-push-action)
+(с кешированием слоёв в кеше GitHub Actions), прогоняет на нём тесты внутри
+Docker Compose и публикует этот же образ на Docker Hub с тегом `latest`.
